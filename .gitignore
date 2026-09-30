@@ -1,0 +1,28 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Temporary inspection / evaluation outputs
+chunk_inspection*.txt
+eval_results*.txt
+
+# Raw third-party corpus/support files
+data/raw/
+data/support/
+
+# Model / package caches
+.cache/

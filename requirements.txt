@@ -1,0 +1,7 @@
+minsearch
+numpy
+openai
+pydantic
+python-dotenv
+scikit-learn
+sentence-transformers

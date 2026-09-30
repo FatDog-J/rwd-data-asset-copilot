@@ -1,0 +1,91 @@
+[
+  {
+    "id": "Q1",
+    "question": "Which fields indicate when a patient was admitted to and discharged from the hospital?",
+    "expected_sources": ["admissions.md"],
+    "expected_sections": ["admittime", "dischtime", "deathtime"],
+    "source_match": "any",
+    "category": "field_lookup"
+  },
+  {
+    "id": "Q2",
+    "question": "Which field tells me when a medication was administered?",
+    "expected_sources": ["emar.md"],
+    "expected_sections": ["charttime"],
+    "source_match": "any",
+    "category": "field_lookup"
+  },
+  {
+    "id": "Q3",
+    "question": "Which field contains the prescribed route of administration for a medication?",
+    "expected_sources": ["prescriptions.md"],
+    "expected_sections": ["route"],
+    "source_match": "any",
+    "category": "field_lookup"
+  },
+  {
+  "id": "Q4",
+  "question": "Which tables or fields can help distinguish a prescribed medication from a medication that was actually administered?",
+  "expected_sources": ["prescriptions.md", "emar.md"],
+  "expected_sections": [],
+  "source_match": "all",
+  "category": "table_selection"
+ },
+ {
+    "id": "Q5",
+    "question": "Which table should I use to study patients' physical movements between hospital locations?",
+    "expected_sources": ["transfers.md"],
+    "expected_sections": ["transfers", "careunit", "intime", "outtime"],
+    "source_match": "any",
+    "category": "table_selection"
+ },
+ {
+    "id": "Q6",
+    "question": "Which identifier represents a unique hospital admission?",
+    "expected_sources": ["schema-overview.md", "admissions.md","transfers.md"],
+    "expected_sections": ["hadm_id"],
+    "source_match": "any",
+    "category": "data_relationship"
+  },
+  {
+    "id": "Q7",
+    "question": "Which field can be used to classify the urgency or type of a hospital admission?",
+    "expected_sources": ["admissions.md"],
+    "expected_sections": ["admission_type"],
+    "source_match": "any",
+    "category": "field_lookup"
+  },
+  {
+    "id": "Q8",
+    "question": "What steps does the documentation suggest for longitudinal analysis?",
+    "expected_sources": ["schema-overview.md"],
+    "expected_sections": ["Longitudinal analysis"],
+    "source_match": "any",
+    "category": "methodology"
+  },
+  {
+  "id": "Q9",
+  "question": "Are medication administration records available consistently across the entire MIMIC-IV study period?",
+  "acceptable_evidence": [
+    {
+      "source": "emar.md",
+      "section": "Important considerations"
+    },
+    {
+      "source": "dataset-overview.md",
+      "section": "Overview"
+    }
+  ],
+  "evidence_match": "any",
+  "category": "limitation"
+  },
+  {
+    "id": "Q10",
+    "question": "What kinds of hospital-wide data are available in the MIMIC-IV hosp module?",
+    "expected_sources": ["schema-overview.md"],
+    "expected_sections": ["Hospital (hosp) module"],
+    "source_match": "any",
+    "category": "asset_overview"
+  }
+ 
+]
