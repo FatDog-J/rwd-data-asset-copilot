@@ -1,3 +1,4 @@
+import argparse
 import json
 from pathlib import Path
 
@@ -16,8 +17,15 @@ EVAL_PATH = PROJECT_ROOT / "evals" / "generation_eval.json"
 OUTPUTS_PATH = PROJECT_ROOT / "evals" / "generation_outputs.json"
 
 
-def load_generation_eval():
-    return json.loads(EVAL_PATH.read_text(encoding="utf-8"))
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--spec", type=Path, default=EVAL_PATH)
+    parser.add_argument("--output", type=Path, default=OUTPUTS_PATH)
+    return parser.parse_args()
+
+
+def load_generation_eval(spec_path):
+    return json.loads(spec_path.read_text(encoding="utf-8"))
 
 
 def generate_case_output(case):
@@ -47,7 +55,8 @@ def generate_case_output(case):
 
 
 if __name__ == "__main__":
-    cases = load_generation_eval()
+    args = parse_args()
+    cases = load_generation_eval(args.spec)
     outputs = []
 
     for case in cases:
@@ -55,7 +64,7 @@ if __name__ == "__main__":
         outputs.append(output)
         print(f"generated: {output['id']}")
 
-    OUTPUTS_PATH.write_text(
+    args.output.write_text(
         json.dumps(
             {
                 "cases": outputs,
@@ -65,5 +74,5 @@ if __name__ == "__main__":
         encoding="utf-8",
     )
 
-    print(f"saved: {OUTPUTS_PATH}")
+    print(f"saved: {args.output}")
     print(f"total_cases: {len(outputs)}")

@@ -1,3 +1,4 @@
+import argparse
 import json
 import re
 from pathlib import Path
@@ -43,8 +44,15 @@ ABSTENTION_TERMS = [
 ]
 
 
-def load_generation_outputs():
-    return json.loads(OUTPUTS_PATH.read_text(encoding="utf-8"))["cases"]
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=Path, default=OUTPUTS_PATH)
+    parser.add_argument("--output", type=Path, default=RESULTS_PATH)
+    return parser.parse_args()
+
+
+def load_generation_outputs(input_path):
+    return json.loads(input_path.read_text(encoding="utf-8"))["cases"]
 
 
 def normalize_text(text):
@@ -218,7 +226,8 @@ def summarize(results):
 
 
 if __name__ == "__main__":
-    cases = load_generation_outputs()
+    args = parse_args()
+    cases = load_generation_outputs(args.input)
     results = []
 
     for case in cases:
@@ -227,7 +236,7 @@ if __name__ == "__main__":
         print_case_report(result)
 
     summary = summarize(results)
-    RESULTS_PATH.write_text(
+    args.output.write_text(
         json.dumps(
             {
                 "results": results,

@@ -28,7 +28,7 @@ data/support/
 .cache/
 
 # Generated evaluation artifacts
-evals/generation_outputs.json
-evals/generation_eval_results.json
-evals/generation_judge_results.json
+evals/generation_outputs*.json
+evals/generation_eval_results*.json
+evals/generation_judge_results*.json
 
