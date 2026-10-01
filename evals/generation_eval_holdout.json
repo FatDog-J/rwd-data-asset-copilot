@@ -1,0 +1,129 @@
+[
+  {
+    "id": "H1",
+    "question": "Which field tells me whether an eMAR record was administered, delayed, not given, or another administration status?",
+    "answerable": true,
+    "required_points": [
+      "event_txt in the emar table describes the medication administration event or status",
+      "event_txt may contain values such as Administered, Delayed, or Not Given"
+    ],
+    "forbidden_behavior": [
+      "confuse event_txt with charttime",
+      "infer clinical reasons for delayed or not-given medications",
+      "invent additional status categories not supported by the retrieved evidence"
+    ],
+    "category": "field_interpretation"
+  },
+  {
+    "id": "H2",
+    "question": "Which prescription fields indicate the intended prescribed dose and its unit?",
+    "answerable": true,
+    "required_points": [
+      "dose_val_rx gives the prescribed dose value in the prescriptions table",
+      "dose_unit_rx gives the unit of measurement for that dose in the prescriptions table"
+    ],
+    "forbidden_behavior": [
+      "describe these fields as administered dose fields",
+      "substitute form_val_disp or form_unit_disp as the prescribed dose fields",
+      "invent dosing calculations"
+    ],
+    "category": "field_interpretation"
+  },
+  {
+    "id": "H3",
+    "question": "Which identifiers let me connect a patient, a hospital admission, and a physical location or transfer record?",
+    "answerable": true,
+    "required_points": [
+      "subject_id identifies the patient",
+      "hadm_id identifies the hospital admission or hospital stay",
+      "transfer_id identifies a patient physical location or transfer record",
+      "these identifiers are used in the transfers context"
+    ],
+    "forbidden_behavior": [
+      "conflate patient-level, admission-level, and location-level identifiers",
+      "claim stay_id is the primary identifier for all transfer records",
+      "invent join relationships not supported by the retrieved evidence"
+    ],
+    "category": "data_relationship"
+  },
+  {
+    "id": "H4",
+    "question": "Which eMAR field links a medication administration to orders in POE and prescriptions?",
+    "answerable": true,
+    "required_points": [
+      "poe_id",
+      "poe_id links medication administrations in emar to orders in POE and prescriptions"
+    ],
+    "forbidden_behavior": [
+      "substitute pharmacy_id as the documented answer",
+      "claim the linkage is one-to-one unless explicitly supported",
+      "claim complete linkage coverage unless explicitly supported"
+    ],
+    "category": "data_relationship"
+  },
+  {
+    "id": "H5",
+    "question": "What best-practice checks does the documentation suggest before relying on query results?",
+    "answerable": true,
+    "required_points": [
+      "check reasonable value ranges",
+      "validate identifier linkages",
+      "account for missing data patterns"
+    ],
+    "forbidden_behavior": [
+      "invent statistical validation procedures",
+      "claim these checks are exhaustive quality-control requirements",
+      "add clinical validation steps not present in the retrieved evidence"
+    ],
+    "category": "methodology"
+  },
+  {
+    "id": "H6",
+    "question": "What caution does the admissions documentation give about organ donor accounts?",
+    "answerable": true,
+    "required_points": [
+      "organ donor accounts may be distinct hospital admissions",
+      "they may have very short or negative lengths of stay",
+      "deathtime may match the earlier admission"
+    ],
+    "forbidden_behavior": [
+      "infer exclusion rules for organ donor accounts unless explicitly supported",
+      "quantify how common organ donor accounts are",
+      "invent clinical interpretations not present in the retrieved evidence"
+    ],
+    "category": "limitation"
+  },
+  {
+    "id": "H7",
+    "question": "What percentage of eMAR medication administration events were marked as \"Not Given\"?",
+    "answerable": false,
+    "required_points": [
+      "event_txt can include Not Given",
+      "the available documentation does not provide the requested percentage or count",
+      "event-level analysis or aggregate counts would be needed to calculate the percentage"
+    ],
+    "forbidden_behavior": [
+      "invent a percentage",
+      "estimate prevalence from the list of possible event_txt values",
+      "treat the existence of Not Given as evidence of its frequency"
+    ],
+    "category": "abstention"
+  },
+  {
+    "id": "H8",
+    "question": "Which care unit had the longest average transfer duration?",
+    "answerable": false,
+    "required_points": [
+      "careunit identifies the relevant unit or ward",
+      "intime and outtime provide timing information for transfer or location records",
+      "the documentation does not provide average transfer-duration rankings by care unit",
+      "analysis of the underlying transfer records would be required"
+    ],
+    "forbidden_behavior": [
+      "name a care unit as having the longest average duration without supporting analysis",
+      "invent average durations",
+      "infer rankings from example care unit names"
+    ],
+    "category": "abstention"
+  }
+]
