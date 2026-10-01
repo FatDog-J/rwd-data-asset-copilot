@@ -126,3 +126,20 @@ Lexical Top 20 + Vector Top 20
 → union/deduplicate
 → CrossEncoder reranking
 → Top 5 evidence
+
+## Generation Benchmark v1
+Deterministic evaluation
+────────────────────────
+Schema validity             8 / 8
+Source containment          8 / 8
+Quantitative hallucination  0
+Abstention behavior         2 / 2
+
+Semantic evaluation
+────────────────────────
+Overall pass                8 / 8
+Correctness                 2.00 / 2
+Groundedness                2.00 / 2
+Completeness                2.00 / 2
+Source faithfulness         2.00 / 2
+Abstention                  2.00 / 2

@@ -1,0 +1,118 @@
+[
+  {
+    "id": "G1",
+    "question": "Which field tells me when a medication was administered?",
+    "answerable": true,
+    "required_points": [
+      "charttime is the medication administration time field in the emar table"
+    ],
+    "forbidden_behavior": [
+      "invent unsupported limitations",
+      "cite sources not present in the retrieved evidence"
+    ],
+    "category": "field_lookup"
+  },
+  {
+    "id": "G2",
+    "question": "Which field can be used to classify the urgency or type of a hospital admission?",
+    "answerable": true,
+    "required_points": [
+      "admission_type"
+    ],
+    "forbidden_behavior": [
+      "invent unsupported fields",
+      "invent unsupported limitations"
+    ],
+    "category": "field_lookup"
+  },
+  {
+    "id": "G3",
+    "question": "Which tables or fields can help distinguish a prescribed medication from a medication that was actually administered?",
+    "answerable": true,
+    "required_points": [
+      "prescriptions",
+      "emar",
+      "distinguish prescribed medication from administered medication"
+    ],
+    "forbidden_behavior": [
+      "claim that no linkage mechanism exists unless retrieved evidence explicitly states that",
+      "invent unsupported limitations",
+      "cite sources not present in retrieved evidence"
+    ],
+    "category": "cross_document_synthesis"
+  },
+  {
+    "id": "G4",
+    "question": "Which table should I use to study patients' physical movements between hospital locations?",
+    "answerable": true,
+    "required_points": [
+      "transfers"
+    ],
+    "forbidden_behavior": [
+      "invent additional required tables",
+      "invent unsupported limitations"
+    ],
+    "category": "table_selection"
+  },
+  {
+    "id": "G5",
+    "question": "What steps does the documentation suggest for longitudinal analysis?",
+    "answerable": true,
+    "required_points": [
+      "identify the patient population",
+      "extract events from relevant modules",
+      "align timestamps for temporal analysis"
+    ],
+    "forbidden_behavior": [
+      "expand \"relevant modules\" into specific modules unless the retrieved evidence explicitly identifies them for longitudinal analysis",
+      "invent unsupported limitations"
+    ],
+    "category": "methodology"
+  },
+  {
+    "id": "G6",
+    "question": "Are medication administration records available consistently across the entire MIMIC-IV study period?",
+    "answerable": true,
+    "required_points": [
+      "medication administration records are not consistently available across the full study period",
+      "eMAR was introduced or implemented gradually",
+      "eMAR data are not available for all patients"
+    ],
+    "forbidden_behavior": [
+      "invent exact yearly coverage rates",
+      "invent percentages",
+      "make stronger claims than the retrieved documentation supports"
+    ],
+    "category": "limitation"
+  },
+  {
+    "id": "G7",
+    "question": "What proportion of patients lack eMAR records in each year of the MIMIC-IV study period?",
+    "answerable": false,
+    "required_points": [
+      "the available evidence does not provide yearly proportions",
+      "the answer cannot be quantified from the retrieved documentation"
+    ],
+    "forbidden_behavior": [
+      "invent percentages",
+      "invent yearly rates",
+      "provide unsupported quantitative estimates"
+    ],
+    "category": "abstention"
+  },
+  {
+    "id": "G8",
+    "question": "What percentage of hospital admissions were classified as urgent?",
+    "answerable": false,
+    "required_points": [
+      "the available documentation does not provide the requested percentage",
+      "patient-level analysis or aggregated study results would be needed to calculate the percentage"
+    ],
+    "forbidden_behavior": [
+      "invent a percentage",
+      "estimate the rate from the data dictionary",
+      "treat the existence of admission_type categories as evidence of prevalence"
+    ],
+    "category": "abstention"
+  }
+]
