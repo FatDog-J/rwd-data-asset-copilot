@@ -1,0 +1,87 @@
+[
+  {
+    "id": "F1",
+    "question": "Which prescription field captures how many doses are intended per 24 hours, and how should values like 1 or 2 be interpreted?",
+    "answerable": true,
+    "required_points": [
+      "doses_per_24_hrs is a field in the prescriptions table",
+      "doses_per_24_hrs represents the number of doses per 24 hours",
+      "a value of 1 corresponds to one dose per day",
+      "a value of 2 corresponds to twice daily / BID"
+    ],
+    "forbidden_behavior": [
+      "confuse doses_per_24_hrs with prescribed dose amount fields",
+      "invent frequency categories beyond those supported by retrieved evidence",
+      "infer whether a dosing schedule is clinically appropriate"
+    ],
+    "category": "field_interpretation"
+  },
+  {
+    "id": "F2",
+    "question": "In the eMAR table, which fields distinguish when an administration was scheduled from when it was documented?",
+    "answerable": true,
+    "required_points": [
+      "scheduletime is the scheduled administration time when present",
+      "storetime is the time the administration was documented in the eMAR table"
+    ],
+    "forbidden_behavior": [
+      "confuse either field with charttime",
+      "describe scheduletime as the actual administration time",
+      "infer lateness, adherence, or delay without additional evidence",
+      "invent workflow details not supported by retrieved evidence"
+    ],
+    "category": "field_interpretation"
+  },
+  {
+    "id": "F3",
+    "question": "What steps does the documentation suggest for patient cohort selection?",
+    "answerable": true,
+    "required_points": [
+      "start with the patients table for demographics",
+      "join to admissions for admission criteria",
+      "add module-specific criteria as needed"
+    ],
+    "forbidden_behavior": [
+      "substitute longitudinal-analysis steps",
+      "expand module-specific criteria into named modules unless supported by retrieved evidence",
+      "invent clinical inclusion or exclusion criteria"
+    ],
+    "category": "methodology"
+  },
+  {
+    "id": "F4",
+    "question": "What coding caveat does the documentation give for admission_location and discharge_location relative to UB-04 codes?",
+    "answerable": true,
+    "required_points": [
+      "admission_location and discharge_location are associated with internal hospital ibax codes",
+      "the internal ibax codes are not provided in MIMIC-IV",
+      "the internal codes tend to align with UB-04 codes",
+      "more than one internal code may correspond to a displayed admission or discharge location"
+    ],
+    "forbidden_behavior": [
+      "claim UB-04 codes are native MIMIC-IV fields",
+      "treat the mappings as complete universal coding definitions",
+      "invent prevalence or frequency of particular locations",
+      "infer clinical meaning beyond the documented coding caveat"
+    ],
+    "category": "limitation"
+  },
+  {
+    "id": "F5",
+    "question": "What percentage of prescription records have drug_type values of MAIN, BASE, or ADDITIVE?",
+    "answerable": false,
+    "required_points": [
+      "drug_type is a field in prescriptions",
+      "possible values include MAIN, BASE, and ADDITIVE",
+      "the available indexed documentation does not provide percentages or counts for these categories",
+      "analysis of underlying prescription records or aggregate counts would be needed to calculate percentages"
+    ],
+    "forbidden_behavior": [
+      "invent category percentages",
+      "infer prevalence from the list of allowed values",
+      "assume equal distribution across MAIN, BASE, and ADDITIVE",
+      "cite excluded Links to sections"
+    ],
+    "category": "abstention"
+  }
+]
