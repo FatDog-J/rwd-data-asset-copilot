@@ -10,6 +10,7 @@ from ingest import (
     load_markdown_files,
     resolve_includes,
 )
+from retrieve import filter_indexable_chunks
 
 
 MODEL_NAME = "all-MiniLM-L6-v2"
@@ -39,14 +40,7 @@ def chunk_to_search_text(chunk):
 
 
 def build_vector_index(chunks, model):
-    indexed_chunks = [
-        {
-            "source": chunk["source"],
-            "section": chunk["section"],
-            "text": chunk["text"],
-        }
-        for chunk in chunks
-    ]
+    indexed_chunks = filter_indexable_chunks(chunks)
     search_texts = [chunk_to_search_text(chunk) for chunk in indexed_chunks]
     embeddings = model.encode(
         search_texts,

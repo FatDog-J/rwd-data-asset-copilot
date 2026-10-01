@@ -143,3 +143,55 @@ Groundedness                2.00 / 2
 Completeness                2.00 / 2
 Source faithfulness         2.00 / 2
 Abstention                  2.00 / 2
+
+## Evaluation
+
+The system uses separate development, regression, and fresh holdout
+evaluation sets.
+
+### Retrieval
+
+The retrieval pipeline uses a shared searchable corpus for both lexical
+and vector retrieval:
+
+Query
+→ Lexical Top 20 + Vector Top 20
+→ candidate union
+→ CrossEncoder reranking
+→ Top 5 evidence
+
+Final searchable corpus: 77 chunks.
+
+### Generation Benchmark
+
+Development benchmark:
+- 8/8 cases passed
+- 8/8 schema valid
+- 8/8 source containment
+- 0 quantitative hallucinations
+- 2/2 abstention cases passed
+
+### Final Fresh Holdout v1
+
+A separate five-case holdout set was frozen before the final benchmark
+and was not used for prompt tuning.
+
+Results:
+- Overall semantic pass: 5/5
+- Correctness: 2.00 / 2
+- Groundedness: 2.00 / 2
+- Completeness: 2.00 / 2
+- Source faithfulness: 2.00 / 2
+- Abstention: 2.00 / 2
+- Schema validity: 5/5
+- Source containment: 5/5
+- Quantitative hallucinations: 0
+
+During the initial holdout evaluation, QA identified two evaluation
+infrastructure issues: inconsistent lexical/vector corpus filtering and
+missing enforcement of abstention scores in the semantic judge. These
+were corrected before running the final fresh holdout.
+
+These benchmarks are small project-level evaluation sets and should not
+be interpreted as estimates of general domain-wide accuracy.
+

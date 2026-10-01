@@ -45,8 +45,8 @@ def _is_link_section(section):
     return section == "Links to" or section.endswith("> Links to")
 
 
-def build_index(chunks):
-    searchable_chunks = [
+def filter_indexable_chunks(chunks):
+    return [
         {
             "source": chunk["source"],
             "section": chunk["section"],
@@ -55,6 +55,10 @@ def build_index(chunks):
         for chunk in chunks
         if not _is_link_section(chunk["section"])
     ]
+
+
+def build_index(chunks):
+    searchable_chunks = filter_indexable_chunks(chunks)
 
     index = minsearch.Index(
         text_fields=TEXT_FIELDS,

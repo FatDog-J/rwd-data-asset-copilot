@@ -152,11 +152,62 @@ def validate_answer(answer_data):
     return RWDAnswer.model_validate(answer_data)
 
 
+def recompute_pass_overall(judge_result, answerable):
+    base_pass = (
+        judge_result.correctness >= 1
+        and judge_result.groundedness >= 1
+        and judge_result.completeness >= 1
+        and judge_result.source_faithfulness >= 1
+    )
+
+    if answerable:
+        return base_pass
+
+    return (
+        base_pass
+        and judge_result.abstention in (0, 1, 2)
+        and judge_result.abstention >= 1
+    )
+
+
+def validate_judge_contract(judge_result, answerable):
+    violations = []
+
+    if answerable and judge_result.abstention is not None:
+        violations.append(
+            "answerable=true cases should return abstention=null"
+        )
+
+    if not answerable and judge_result.abstention is None:
+        violations.append(
+            "answerable=false case returned abstention=null"
+        )
+    elif (
+        not answerable
+        and judge_result.abstention not in (0, 1, 2)
+    ):
+        violations.append(
+            "answerable=false case returned abstention outside 0/1/2"
+        )
+
+    pass_overall = recompute_pass_overall(judge_result, answerable)
+
+    return judge_result.model_copy(
+        update={
+            "pass_overall": pass_overall,
+        }
+    ), violations
+
+
 def evaluate_case(frozen_case):
     evidence = frozen_case["retrieved_evidence"]
     answer = validate_answer(frozen_case["generated_answer"])
     judge_prompt = build_judge_prompt(frozen_case, evidence, answer)
     judge_result = call_judge(judge_prompt)
+    judge_result, contract_violations = validate_judge_contract(
+        judge_result,
+        frozen_case["answerable"],
+    )
 
     return {
         "id": frozen_case["id"],
@@ -166,6 +217,7 @@ def evaluate_case(frozen_case):
         "retrieved_evidence": evidence,
         "generated_answer": answer.model_dump(),
         "judge_result": judge_result.model_dump(),
+        "judge_contract_violations": contract_violations,
     }
 
 
@@ -197,6 +249,11 @@ def print_case_report(result):
             print(f"- {issue}")
     else:
         print("- none")
+    if result["judge_contract_violations"]:
+        print()
+        print("Judge contract violations:")
+        for issue in result["judge_contract_violations"]:
+            print(f"- {issue}")
     print()
 
 
@@ -206,11 +263,35 @@ def average(values):
 
 def summarize(results):
     judge_results = [result["judge_result"] for result in results]
-    abstention_scores = [
-        judge["abstention"]
-        for judge in judge_results
-        if judge["abstention"] is not None
+    abstention_results = [
+        result
+        for result in results
+        if result["answerable"] is False
     ]
+    abstention_scores = [
+        result["judge_result"]["abstention"]
+        for result in abstention_results
+        if result["judge_result"]["abstention"] is not None
+    ]
+    abstention_cases_missing_score = [
+        result["id"]
+        for result in abstention_results
+        if result["judge_result"]["abstention"] is None
+    ]
+    judge_contract_violation_cases = [
+        result["id"]
+        for result in results
+        if result["judge_contract_violations"]
+    ]
+    abstention_missing_count = len(abstention_cases_missing_score)
+    abstention_case_count = len(abstention_results)
+    average_abstention = None
+    average_abstention_status = "N/A"
+    if abstention_case_count and abstention_missing_count:
+        average_abstention_status = "incomplete"
+    elif abstention_case_count:
+        average_abstention = average(abstention_scores)
+        average_abstention_status = "valid"
 
     return {
         "total_cases": len(results),
@@ -221,7 +302,18 @@ def summarize(results):
         "average_source_faithfulness": average(
             [judge["source_faithfulness"] for judge in judge_results]
         ),
-        "average_abstention": average(abstention_scores),
+        "average_abstention": average_abstention,
+        "average_abstention_status": average_abstention_status,
+        "average_abstention_is_valid": average_abstention_status == "valid",
+        "benchmark_complete": (
+            abstention_missing_count == 0
+            and not judge_contract_violation_cases
+        ),
+        "abstention_case_count": abstention_case_count,
+        "abstention_scored_count": len(abstention_scores),
+        "abstention_missing_count": abstention_missing_count,
+        "abstention_cases_missing_score": abstention_cases_missing_score,
+        "judge_contract_violation_cases": judge_contract_violation_cases,
         "failed_cases": [
             result["id"]
             for result in results
@@ -244,7 +336,7 @@ def summarize(results):
         ],
         "abstention_cases_below_2": [
             result["id"]
-            for result in results
+            for result in abstention_results
             if result["judge_result"]["abstention"] is not None
             and result["judge_result"]["abstention"] < 2
         ],
@@ -262,7 +354,24 @@ def print_summary(summary):
         "average_source_faithfulness: "
         f"{summary['average_source_faithfulness']:.2f}"
     )
-    print(f"average_abstention: {summary['average_abstention']:.2f}")
+    if summary["average_abstention_status"] == "valid":
+        print(f"average_abstention: {summary['average_abstention']:.2f}")
+    elif summary["average_abstention_status"] == "N/A":
+        print("average_abstention: N/A")
+    else:
+        print("average_abstention: incomplete")
+    print(f"benchmark_complete: {summary['benchmark_complete']}")
+    print(f"abstention_case_count: {summary['abstention_case_count']}")
+    print(f"abstention_scored_count: {summary['abstention_scored_count']}")
+    print(f"abstention_missing_count: {summary['abstention_missing_count']}")
+    print(
+        "abstention_cases_missing_score: "
+        f"{summary['abstention_cases_missing_score']}"
+    )
+    print(
+        "judge_contract_violation_cases: "
+        f"{summary['judge_contract_violation_cases']}"
+    )
     print(f"failed_cases: {summary['failed_cases']}")
     print(
         "cases_with_groundedness_below_2: "

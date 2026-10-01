@@ -8,7 +8,7 @@ from sentence_transformers import CrossEncoder, SentenceTransformer
 
 from models import RWDAnswer
 from rerank_retrieve import RERANKER_MODEL_NAME, rerank_search
-from retrieve import build_index, load_processed_chunks
+from retrieve import build_index, filter_indexable_chunks, load_processed_chunks
 from vector_retrieve import MODEL_NAME as EMBEDDING_MODEL_NAME, build_vector_index
 
 
@@ -103,9 +103,10 @@ def call_llm(prompt):
 @lru_cache(maxsize=1)
 def _retrieval_components():
     chunks = load_processed_chunks()
-    lexical_index = build_index(chunks)
+    indexable_chunks = filter_indexable_chunks(chunks)
+    lexical_index = build_index(indexable_chunks)
     embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
-    vector_index = build_vector_index(chunks, embedding_model)
+    vector_index = build_vector_index(indexable_chunks, embedding_model)
     reranker = CrossEncoder(RERANKER_MODEL_NAME)
 
     return lexical_index, vector_index, embedding_model, reranker
