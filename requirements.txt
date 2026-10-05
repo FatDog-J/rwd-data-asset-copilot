@@ -5,3 +5,4 @@ pydantic
 python-dotenv
 scikit-learn
 sentence-transformers
+streamlit
