@@ -19,6 +19,7 @@ Thumbs.db
 # Temporary inspection / evaluation outputs
 chunk_inspection*.txt
 eval_results*.txt
+logs/
 
 # Raw third-party corpus/support files
 data/raw/
