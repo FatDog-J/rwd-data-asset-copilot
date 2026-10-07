@@ -22,8 +22,12 @@ eval_results*.txt
 logs/
 
 # Raw third-party corpus/support files
-data/raw/
-data/support/
+data/raw/*
+!data/raw/mimic_docs/
+!data/raw/mimic_docs/**
+data/support/*
+!data/support/mimic_includes/
+!data/support/mimic_includes/**
 
 # Model / package caches
 .cache/
